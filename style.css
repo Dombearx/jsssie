@@ -1,0 +1,292 @@
+header {
+    display: flex;
+    background: linear-gradient(#6303FA, #081300);
+    color: lightgrey;
+    font-size: 2em;
+}
+
+footer {
+    background-color: #6303FA;
+    font-size: 1em;
+    color: lightgray;
+}
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-size: 1em;
+}
+
+/*WIDOKI*/
+.articles {
+    display: flex;
+    flex-basis: 85%;
+}
+
+article {
+    display: none;
+    flex-direction: column;
+    flex: auto;
+}
+
+article:target {
+    display: flex;
+}
+
+.maincontent {
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+}
+
+
+/*MENU*/
+nav {
+    display: flex;
+    flex-direction: column;
+    background-color: #03AAFA;
+    flex-grow: 1;
+}
+
+/*TABLEKA*/
+table {
+    width: 100%;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+   
+}
+
+th {
+    background-color: #1C02DE;
+    color: lightgrey; 
+}
+
+tr{
+    margin: 0;
+    padding: 0;
+}
+
+th input{
+    background-color: #1C02DE;
+    color: lightgrey;   
+    width: 100%;
+}
+
+tr:nth-child(even){
+    background-color: #03AAFA
+}
+
+tr:nth-child(even) td input:not([type=submit]){
+    background-color: #03AAFA
+}
+
+tr:nth-child(even) td select{
+    background-color: #03AAFA
+}
+
+tr:nth-child(odd){
+    background-color: #0E30F5
+}
+
+tr:nth-child(odd) td input:not([type=submit]){
+    background-color: #0E30F5
+}
+
+tr:nth-child(odd) td select{
+    background-color: #0E30F5
+}
+
+tr:hover{
+    background-color: #1C02DE;
+}
+
+tr:hover td input:not([type=submit]){
+    background-color: #1C02DE;
+}
+
+tr:hover td select{
+    background-color: #1C02DE;
+}
+
+tr td input:not([type=submit]):invalid {
+    background-color: tomato;
+    color: black;
+  }
+
+input {
+    color: lightgrey; 
+    border: none;
+}
+
+input::placeholder{
+    color: lightgrey;
+}
+
+select{
+    color: lightgrey; 
+    border: none;
+}
+
+tr input:not([type=submit]){
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+tr select{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+td {
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+
+.fakeButton {
+    background-color: #6303FA;
+    border: none;
+    color: lightgray;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+input[type=submit]{
+    background-color: #6303FA;
+    border: none;
+    color: lightgray;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+/*LINKI*/
+a:not(.fakeButton) {    
+    color: lightgrey;
+    text-decoration: none;
+}
+
+a:hover:not(.fakeButton){
+    text-decoration: underline;
+}
+
+
+
+/*PRINT*/
+@media print {
+
+    header, footer, nav{
+        display: none;
+    }
+
+    article:target{
+        display: flex;
+    }
+
+    .actions{
+        display: none;
+    }
+
+    tr:nth-child(even){
+        background-color: white;
+    }
+    
+    tr:nth-child(even) td input:not([type=submit]){
+        background-color: white;
+    }
+    
+    tr:nth-child(even) td select{
+        background-color: white;
+    }
+    
+    tr:nth-child(odd){
+        background-color: white;
+    }
+    
+    tr:nth-child(odd) td input:not([type=submit]){
+        background-color: white;
+    }
+    
+    tr:nth-child(odd) td select{
+        background-color: white;
+    }
+    
+    tr:hover{
+        background-color: white;
+    }
+    
+    tr:hover td input:not([type=submit]){
+        background-color: white;
+    }
+    
+    tr:hover td select{
+        background-color: white;
+    }
+
+    table tr th input[type=search]{
+        color: black;
+    }
+    
+    input:invalid {
+        background-color: white;
+      }
+
+    th {
+        background-color: white;
+        color: black; 
+
+    }
+
+    table{
+        border-collapse: collapse;
+        color: black
+    }
+
+    tr {
+        border-bottom: 1px solid black;
+    }
+
+    th input{
+        background-color: white;
+        color: black;   
+        width: 100%;
+        font-size: 1.1em;
+    }
+
+    input {
+        color: black; 
+        border: none;
+    }
+
+    input::placeholder{
+        color: black;
+    }
+    
+    select{
+        color: black; 
+        border: none;
+    }
+
+    .fakeButton {
+        color: black;
+    }
+    
+    input[type=submit]{
+        color: black;
+    }
+    
+    /*LINKI*/
+    a:not(.fakeButton) {    
+        color: black;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="date"]::-webkit-inner-spin-button{
+        display: none;
+    }
+}

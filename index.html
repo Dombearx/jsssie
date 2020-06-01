@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head>
+    <title>Super aplikacja</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="http://ajax.aspnetcdn.com/ajax/modernizr/modernizr-1.7-development-only.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            if (!Modernizr.inputtypes.date) {
+                console.log("The 'date' input type is not supported, so using JQueryUI datepicker instead.");
+                $(".theDate").datepicker();
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <header>
+        <img src="https://www.vulcan.edu.pl/vulcang_images/user/program/ikony/1603pl_5.svg" alt="Logo" height="42"
+            width="42">
+        <h1>Wspaniała aplikacja do zarządzania bazą danych</h1>
+    </header>
+    <div class="maincontent">
+        <nav>
+            <a href="#studenci">Lista studentów</a>
+            <a href="#przedmioty">Lista przedmiotów</a>
+        </nav>
+        <div class="articles">
+            <!--studenci -->
+            <article id="studenci">
+                <h2>Lista studentów</h2>
+                <form>
+                    <table>
+                        <tr>
+                            <th>
+                                <input type="search" id="numerIndeksu" placeholder="numer indeksu">
+                            </th>
+                            <th>
+                                <input type="search" id="imieStudenta" placeholder="imie">
+                            </th>
+                            <th>
+                                <input type="search" id="nazwiskoStudenta" placeholder="nazwisko">
+                            </th>
+                            <th>
+                                <input type="search" id="dataUrodzenia" placeholder="data urodzenia">
+                            </th>
+                            <th class="actions">
+                                Akcje
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" id="s1NumerIndeksu" placeholder="numer indeksu" value=1 readonly>
+                            </td>
+                            <td>
+                                <input type="text" id="s1Imie" placeholder="imie" value="Dominik" required>
+                            </td>
+                            <td>
+                                <input type="text" id="s1Nazwisko" placeholder="nazwisko" value="Doberski" required>
+                            </td>
+                            <td>
+                                <input class="theDate" type="date" id="s1DataUrodzenia" value="1996-10-23"
+                                    min="1900-01-01" max="2001-01-01" required>
+                            </td>
+                            <td class="actions">
+                                <!--<input type="submit" id="s1Oceny" value="Oceny">-->
+                                <a class="fakeButton" href="#oceny">Oceny</a>
+                                <input type="submit" id="s1Usun" value="Usuń">
+                                <input type="submit" id="s1Edytuj" value="Edycja">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" id="s2NumerIndeksu" placeholder="numer indeksu" value=2 readonly>
+                            </td>
+                            <td>
+                                <input type="text" id="s2Imie" placeholder="imie" value="Mariusz" required>
+                            </td>
+                            <td>
+                                <input type="text" id="s2Nazwisko" placeholder="nazwisko" value="Kuświk" required>
+                            </td>
+                            <td>
+                                <input class="theDate" type="date" id="s2DataUrodzenia" value="1995-10-23"
+                                    min="1900-01-01" max="2001-01-01" required>
+                            </td>
+                            <td class="actions">
+                                <!--<input type="submit" id="s1Oceny" value="Oceny">-->
+                                <a class="fakeButton" href="#oceny">Oceny</a>
+                                <input type="submit" id="s2Usun" value="Usuń">
+                                <input type="submit" id="s2Edytuj" value="Edycja">
+                                <input type="submit" id="studentDodaj" value="Dodaj">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+
+            </article>
+
+            <!--oceny konkretnego studenta-->
+            <article id="oceny">
+                <h2>Lista ocen</h2>
+                <h3>Oceny: Dominik Doberski</h3>
+                <form>
+                    <table>
+                        <tr>
+                            <th>
+                                <input type="search" id="idOceny" placeholder="id">
+                            </th>
+                            <th>
+                                <input type="search" id="wartosc" placeholder="Wartość">
+                            </th>
+                            <th>
+                                <input type="search" id="przedmiot" placeholder="Przedmiot">
+                            </th>
+                            <th>
+                                <input type="search" id="dataWystawienia" placeholder="data wystawienia">
+                            </th>
+                            <th class="actions">
+                                Akcje
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" id="o1Id" placeholder="id" value="1" required min=0 readonly>
+                            </td>
+                            <td>
+                                <input type="number" id="o1Wartosc" placeholder="Wartość" value=3.0 min=2.0 max=5.0
+                                    step=0.5 required>
+                            </td>
+                            <td>
+                                <select id="o1Przedmioty">
+                                    <option value="SINT">SINT</option>
+                                    <option value="UM">UM</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input class="theDate" type="date" id="o1DataWystawienia" value="2020-05-18"
+                                    min="1900-01-01" required>
+                            </td>
+                            <td class="actions">
+                                <input type="submit" id="o1Usun" value="Usuń">
+                                <input type="submit" id="o1Edytuj" value="Edycja">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" id="o2Id" placeholder="id" value="2" required min=0 readonly>
+                            </td>
+                            <td>
+                                <input type="number" id="o2Wartosc" placeholder="Wartość" value=3.5 min=2.0 max=5.0
+                                    step=0.5 required>
+                            </td>
+                            <td>
+                                <select id="o2Przedmioty">
+                                    <option value="SINT">SINT</option>
+                                    <option value="UM">UM</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input class="theDate" type="date" id="o2DataWystawienia" value="2020-05-19"
+                                    min="1900-01-01" required>
+                            </td>
+                            <td class="actions">
+                                <input type="submit" id="o2Usun" value="Usuń">
+                                <input type="submit" id="o2Edytuj" value="Edycja">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" id="o3Id" placeholder="id" value="3" required min=0 readonly>
+                            </td>
+                            <td>
+                                <input type="number" id="o3Wartosc" placeholder="Wartość" value=4.0 min=2.0 max=5.0
+                                    step=0.5 required>
+                            </td>
+                            <td>
+                                <select id="o3Przedmioty">
+                                    <option value="SINT">SINT</option>
+                                    <option value="UM">UM</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input class="theDate" type="date" id="o3DataWystawienia" value="2020-05-26"
+                                    min="1900-01-01" required>
+                            </td>
+                            <td class="actions">
+                                <input type="submit" id="o3Usun" value="Usuń">
+                                <input type="submit" id="o3Edytuj" value="Edycja">
+                                <input type="submit" id="ocenaDodaj" value="Dodaj">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </article>
+
+            <!--przedmioty -->
+            <article id="przedmioty">
+                <h2>Lista przedmiotów</h2>
+                <form>
+                    <table>
+                        <tr>
+                            <th>
+                                <input type="search" id="idPrzedmiotu" placeholder="id">
+                            </th>
+                            <th>
+                                <input type="search" id="nazwaPrzedmiotu" placeholder="Nazwa przedmiotu">
+                            </th>
+                            <th>
+                                <input type="search" id="prowadzacy" placeholder="Prowadzący">
+                            </th>
+                            <th class="actions">
+                                Akcje
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" id="p1Id" placeholder="id" value=1 required min=0>
+                            </td>
+                            <td>
+                                <input type="text" id="p1Nazwa" placeholder="Nazwa przedmiotu" value="SINT" required>
+                            </td>
+                            <td>
+                                <input type="text" id="p1Prowadzacy" placeholder="Prowadzący" value="Tomasz Pawlak"
+                                    required>
+                            </td>
+                            <td class="actions">
+                                <input type="submit" id="p1Usun" value="Usuń">
+                                <input type="submit" id="p1Edytuj" value="Edycja">
+                                <input type="submit" id="przedmiotDodaj" value="Dodaj">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </article>
+        </div>
+        <div class="empty">
+
+        </div>
+    </div>
+    <footer>
+        132207 Dominik Doberski <a href="http://www2.cs.put.poznan.pl/">Strona uczelni</a>
+    </footer>
+</body>
+
+</html>
