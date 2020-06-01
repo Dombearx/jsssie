@@ -13,6 +13,9 @@
 
 <body>
     <a href="http://jquery.com/">jQuery</a>
+
+    The name is <span data-bind="text: personName"></span>
+
     <script src="knockout-3.5.1.js"></script>
     <script src="jquery.js"></script>
     <script src="scripts.js"></script>
@@ -36,8 +39,6 @@
         ko.applyBindings(myViewModel);
 
     </script>
-
-    The name is <span data-bind="text: personName"></span>
 </body>
 
 </html>
