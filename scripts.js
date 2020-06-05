@@ -1,7 +1,7 @@
 "use strict";
 /* globals: $ */
 
-var serverUrl = 'http://localhost:8000/';
+var serverUrl = 'http://localhost:8000';
 
 
 var Model = function() {
@@ -9,27 +9,70 @@ var Model = function() {
     self.students = ko.observableArray();
     self.courses = ko.observableArray();
 
+    self.newStudent = {index: ko.observable(), firstName: ko.observable(), lastName: ko.observable(), birthday: ko.observable()};
+    self.newCourse = {index: ko.observable(), firstName: ko.observable(), lastName: ko.observable(), birthday: ko.observable()};
+
     self.path = serverUrl; 
 
-    self.students.subscribe(function(changes) {
-
-        console.log(changes);
-    
-    }, null, "arrayChange");
 
     self.getStudents = function() {
 
         $.ajax({ 
             type: 'GET', 
-            url: self.path + "students", 
+            url: `${self.path}/students`, 
             dataType: 'json',
             accept: 'application/json; charset=utf-8',
             success: data => {  
-                $.each(data, function(index) {
-                    var student = ko.mapping.fromJS(data[index]);
-                    self.students.push(student);
-                });
-                console.log(self.students())             
+                console.log("data:", data)  
+
+                self.students(data);
+
+                console.log("self.students: ", self.students())           
+            }
+        });
+        
+    };
+
+    self.removeStudent = function(student) {
+
+        $.ajax({ 
+            type: 'DELETE', 
+            url: `${self.path}/students/${student.index}`, 
+            dataType: 'json',
+            accept: 'application/json; charset=utf-8',
+            success: data => {  
+                self.getStudents();           
+            }
+        });
+        
+    };
+
+    self.editStudent = function(student) {
+
+        $.ajax({ 
+            type: 'PUT', 
+            url: `${self.path}/students/${student.index}`, 
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            accept: 'application/json; charset=utf-8',
+            data: ko.mapping.toJSON(student),
+            success: data => {  
+                self.getStudents();           
+            }
+        });
+        
+    };
+
+    self.addStudent = function() {            
+        $.ajax({ 
+            type: 'POST', 
+            url: `${self.path}/students`, 
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            accept: 'application/json; charset=utf-8',
+            data: ko.mapping.toJSON(self.newStudent),
+            success: data => {  
+                self.getStudents();     
             }
         });
         
@@ -55,8 +98,6 @@ var Model = function() {
 
 };
 
-
- 
 
 var view = new Model();
 

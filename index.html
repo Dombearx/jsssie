@@ -31,58 +31,77 @@
             <!--studenci -->
             <article id="studenci">
                 <h2>Lista studentów</h2>
-                <form>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>
-                                    <input type="search" id="numerIndeksu" placeholder="numer indeksu">
-                                </th>
-                                <th>
-                                    <input type="search" id="imieStudenta" placeholder="imie">
-                                </th>
-                                <th>
-                                    <input type="search" id="nazwiskoStudenta" placeholder="nazwisko">
-                                </th>
-                                <th>
-                                    <input type="search" id="dataUrodzenia" placeholder="data urodzenia">
-                                </th>
-                                <th class="actions">
-                                    Akcje
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody data-bind='foreach: view.students'>
-                            <tr>
-                                <td>
-                                    <input type="number" id="s1NumerIndeksu" placeholder="numer indeksu"
-                                        data-bind="value: index" readonly>
-                                </td>
-                                <td>
-                                    <input type="text" id="s1Imie" placeholder="imie" data-bind="value: firstName"
-                                        required>
-                                </td>
-                                <td>
-                                    <input type="text" id="s1Nazwisko" placeholder="nazwisko"
-                                        data-bind="value: lastName" required>
-                                </td>
-                                <td>
-                                    <input class="theDate" type="date" id="s1DataUrodzenia" data-bind="value: birthday"
-                                        min="1900-01-01" max="2001-01-01" required>
-                                </td>
-                                <td class="actions">
-                                    <!--<input type="submit" id="s1Oceny" value="Oceny">-->
-                                    <a class="fakeButton" href="#oceny" data-bind="click: $parent.grades">Oceny</a>
-                                    <input type="submit" id="s1Usun" value="Usuń">
-                                    <input type="submit" id="s1Edytuj" value="Edycja">
-                                    <input type="submit" id="studentDodaj" value="Dodaj">
-                                </td>
-                            </tr>
-                        </tbody>
-
-
-                    </table>
-                </form>
+                <!-- <form data-bind="submit: view.students.addStudent"> -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="search" id="numerIndeksu" placeholder="numer indeksu">
+                            </th>
+                            <th>
+                                <input type="search" id="imieStudenta" placeholder="imie">
+                            </th>
+                            <th>
+                                <input type="search" id="nazwiskoStudenta" placeholder="nazwisko">
+                            </th>
+                            <th>
+                                <input type="search" id="dataUrodzenia" placeholder="data urodzenia">
+                            </th>
+                            <th class="actions">
+                                Akcje
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind='foreach: students'>
+                        <tr>
+                            <td>
+                                <input type="number" id="s1NumerIndeksu" placeholder="numer indeksu"
+                                    data-bind="value: index" readonly>
+                            </td>
+                            <td>
+                                <input type="text" id="s1Imie" placeholder="imie" data-bind="value: firstName" required>
+                            </td>
+                            <td>
+                                <input type="text" id="s1Nazwisko" placeholder="nazwisko" data-bind="value: lastName"
+                                    required>
+                            </td>
+                            <td>
+                                <input class="theDate" type="date" id="s1DataUrodzenia" data-bind="value: birthday"
+                                    min="1900-01-01" max="2001-01-01" required>
+                            </td>
+                            <td class="actions">
+                                <!--<input type="submit" id="s1Oceny" value="Oceny">-->
+                                <a class="fakeButton" href="#oceny" data-bind="click: $parent.grades">Oceny</a>
+                                <button data-bind="click: $parent.removeStudent">Usuń</button>
+                                <button data-bind="click: $parent.editStudent">Edycja</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <form data-bind="submit: addStudent">
+                        <tr>
+                            <td>
+                                <input type="number" id="s1NumerIndeksu" placeholder="numer indeksu"
+                                    data-bind="value: newStudent.index" readonly>
+                            </td>
+                            <td>
+                                <input type="text" id="s1Imie" placeholder="imie"
+                                    data-bind="value: newStudent.firstName" required>
+                            </td>
+                            <td>
+                                <input type="text" id="s1Nazwisko" placeholder="nazwisko"
+                                    data-bind="value: newStudent.lastName" required>
+                            </td>
+                            <td>
+                                <input class="theDate" type="date" id="s1DataUrodzenia"
+                                    data-bind="value: newStudent.birthday" min="1900-01-01" max="2001-01-01" required>
+                            </td>
+                            <td class="actions">
+                                <input type="submit" id="studentDodaj" value="Dodaj">
+                            </td>
+                        </tr>
+                    </form>
+                </table>
+                <!-- </form> -->
 
             </article>
 
@@ -204,7 +223,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody data-bind='foreach: view.courses'>
+                        <tbody data-bind='foreach: courses'>
                             <tr>
                                 <td>
                                     <input type="text" id="p1Id" placeholder="id" data-bind="value: id" required min=0>
@@ -220,10 +239,26 @@
                                 <td class="actions">
                                     <input type="submit" id="p1Usun" value="Usuń">
                                     <input type="submit" id="p1Edytuj" value="Edycja">
-                                    <input type="submit" id="przedmiotDodaj" value="Dodaj">
                                 </td>
                             </tr>
                         </tbody>
+                        <tr>
+                            <td>
+                                <input type="text" id="p1Id" placeholder="id" data-bind="value: newCourse.id" required
+                                    min=0>
+                            </td>
+                            <td>
+                                <input type="text" id="p1Nazwa" placeholder="Nazwa przedmiotu"
+                                    data-bind="value: newCourse.name" required>
+                            </td>
+                            <td>
+                                <input type="text" id="p1Prowadzacy" placeholder="Prowadzący"
+                                    data-bind="value: newCourse.lecturer" required>
+                            </td>
+                            <td class="actions">
+                                <input type="submit" id="przedmiotDodaj" value="Dodaj">
+                            </td>
+                        </tr>
                     </table>
                 </form>
             </article>
