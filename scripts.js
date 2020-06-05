@@ -3,38 +3,95 @@
 
 var serverUrl = 'http://localhost:8000/';
 
-var model = function() {
 
-    var pd = new processData();
+var Model = function() {
+    var self = this;
+    self.students = ko.observableArray();
+    self.courses = ko.observableArray();
 
-    var studentModel = Object.create(ko.observableArray);
-    var courseModel = Object.create(ko.observableArray);
+    self.path = serverUrl; 
+
+    self.getStudents = function() {
+
+        $.ajax({ 
+            type: 'GET', 
+            url: self.path + "students", 
+            dataType: 'json',
+            accept: 'application/json; charset=utf-8',
+            success: data => {  
+                $.each(data, function(index) {
+                    var student = ko.mapping.fromJS(data[index]);
+                    self.students.push(student);
+                    self.students[self.students.length-1].subscribe = function(name) {
+                        alert("something change");
+                    };
+                });
+                console.log(self.students())             
+            }
+        });
+        
+    };
+
+    self.getCourses = function() {
+
+        $.ajax({ 
+            type: 'GET', 
+            url: self.path + "courses", 
+            dataType: 'json',
+            accept: 'application/json; charset=utf-8',
+            success: data => {  
+                $.each(data, function(index) {
+                    var course = ko.mapping.fromJS(data[index]);
+                    self.courses.push(course);
+                });
+                console.log(self.courses())             
+            }
+        });
+        
+    };
+
+};
 
 
-    this.getStudents = Type => {
+ 
+
+var view = new Model();
+
+view.getStudents();
+view.getCourses();
+
+ko.applyBindings(view);
+ 
+/*
+class model {
+
+    studentModel = null;
+    courseModel = null;
+
+    getStudents = Type => {
         
         $.ajax({ 
             type: 'GET', 
             url: serverUrl+Type, 
             dataType: 'json',
             accept: 'application/json; charset=utf-8',
-            success: function (data) {  
+            success: data => {  
                 console.log(data)           
-                pd.show(data, studentModel)
+                this.studentModel = pd.show(data, this.studentModel)
             }
             
         });
     }
     
-    this.getCourses = Type => {    
+    getCourses = Type => {    
         
         $.ajax({ 
             type: 'GET', 
             url: serverUrl+Type, 
             dataType: 'json',
             accept: 'application/json; charset=utf-8',
-            success: function (data) {             
-                pd.show(data, courseModel)
+            success: data => {             
+                this.courseModel = pd.show(data, this.courseModel)
             }
             
         });
@@ -43,27 +100,47 @@ var model = function() {
 } 
 
 
-var processData = function(){
-    this.show = function(data, model) {
+class processData {
+    show = function(data, model) {
 
-        model = ko.mapping.fromJS(data)
+        if(model == null){
+            model = ko.mapping.fromJS(data)
+        } else { 
+            ko.mapping.fromJS(data, model);
+        }
 
-        //ko.mapping.fromJS(data, model);
+
+        for (var field in model) {
+            console.log(field)
+            field.subscribe(function(newValue) {
+                alert("The person's new name is " + newValue);
+            });
+        }
+
+        
 
         console.log(model)
         
         $.each(data, function(index, element) {
             console.log(element)                   
         });
+
+        return model
     
     }
 }
 
 
-var model = new model();
 
-console.log(model.getStudents("students"))
-console.log(model.getCourses("courses"))
+var pd = new processData();
+var myModel = new model();
+
+
+
+console.log(myModel.getStudents("students"))
+console.log(myModel.getCourses("courses"))
+
+
 
 
 window.onload = function() {
@@ -79,11 +156,12 @@ $(function () {
     }
 });
 
+
 $(function () {
     setTimeout(function() {
-        console.log("binding")
-        console.log(model);
-        ko.applyBindings(model);
+        ko.applyBindings(myModel);
+        
     }, 500);
 });
 
+*/

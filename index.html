@@ -52,7 +52,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody data-bind='foreach: model.studentModel'>
+                        <tbody data-bind='foreach: view.students'>
                             <tr>
                                 <td>
                                     <input type="number" id="s1NumerIndeksu" placeholder="numer indeksu"
@@ -204,11 +204,10 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody data-bind='foreach: model.courseModel'>
+                        <tbody data-bind='foreach: view.courses'>
                             <tr>
                                 <td>
-                                    <input type="number" id="p1Id" placeholder="id" data-bind="value: id" required
-                                        min=0>
+                                    <input type="text" id="p1Id" placeholder="id" data-bind="value: id" required min=0>
                                 </td>
                                 <td>
                                     <input type="text" id="p1Nazwa" placeholder="Nazwa przedmiotu"
