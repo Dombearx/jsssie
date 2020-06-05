@@ -62,8 +62,6 @@ var processData = function(){
 
 var model = new model();
 
-
-
 console.log(model.getStudents("students"))
 console.log(model.getCourses("courses"))
 
@@ -83,6 +81,8 @@ $(function () {
 
 $(function () {
     setTimeout(function() {
+        console.log("binding")
+        console.log(model);
         ko.applyBindings(model);
     }, 500);
 });
