@@ -9,14 +9,9 @@
     <script src="http://ajax.aspnetcdn.com/ajax/modernizr/modernizr-1.7-development-only.js"></script>
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
-    <script>
-        $(function () {
-            if (!Modernizr.inputtypes.date) {
-                console.log("The 'date' input type is not supported, so using JQueryUI datepicker instead.");
-                $(".theDate").datepicker();
-            }
-        });
-    </script>
+
+
+
     <meta charset="UTF-8">
 </head>
 
@@ -38,66 +33,54 @@
                 <h2>Lista studentów</h2>
                 <form>
                     <table>
-                        <tr>
-                            <th>
-                                <input type="search" id="numerIndeksu" placeholder="numer indeksu">
-                            </th>
-                            <th>
-                                <input type="search" id="imieStudenta" placeholder="imie">
-                            </th>
-                            <th>
-                                <input type="search" id="nazwiskoStudenta" placeholder="nazwisko">
-                            </th>
-                            <th>
-                                <input type="search" id="dataUrodzenia" placeholder="data urodzenia">
-                            </th>
-                            <th class="actions">
-                                Akcje
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="number" id="s1NumerIndeksu" placeholder="numer indeksu" value=1 readonly>
-                            </td>
-                            <td>
-                                <input type="text" id="s1Imie" placeholder="imie" value="Dominik" required>
-                            </td>
-                            <td>
-                                <input type="text" id="s1Nazwisko" placeholder="nazwisko" value="Doberski" required>
-                            </td>
-                            <td>
-                                <input class="theDate" type="date" id="s1DataUrodzenia" value="1996-10-23"
-                                    min="1900-01-01" max="2001-01-01" required>
-                            </td>
-                            <td class="actions">
-                                <!--<input type="submit" id="s1Oceny" value="Oceny">-->
-                                <a class="fakeButton" href="#oceny">Oceny</a>
-                                <input type="submit" id="s1Usun" value="Usuń">
-                                <input type="submit" id="s1Edytuj" value="Edycja">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="number" id="s2NumerIndeksu" placeholder="numer indeksu" value=2 readonly>
-                            </td>
-                            <td>
-                                <input type="text" id="s2Imie" placeholder="imie" value="Mariusz" required>
-                            </td>
-                            <td>
-                                <input type="text" id="s2Nazwisko" placeholder="nazwisko" value="Kuświk" required>
-                            </td>
-                            <td>
-                                <input class="theDate" type="date" id="s2DataUrodzenia" value="1995-10-23"
-                                    min="1900-01-01" max="2001-01-01" required>
-                            </td>
-                            <td class="actions">
-                                <!--<input type="submit" id="s1Oceny" value="Oceny">-->
-                                <a class="fakeButton" href="#oceny">Oceny</a>
-                                <input type="submit" id="s2Usun" value="Usuń">
-                                <input type="submit" id="s2Edytuj" value="Edycja">
-                                <input type="submit" id="studentDodaj" value="Dodaj">
-                            </td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="search" id="numerIndeksu" placeholder="numer indeksu">
+                                </th>
+                                <th>
+                                    <input type="search" id="imieStudenta" placeholder="imie">
+                                </th>
+                                <th>
+                                    <input type="search" id="nazwiskoStudenta" placeholder="nazwisko">
+                                </th>
+                                <th>
+                                    <input type="search" id="dataUrodzenia" placeholder="data urodzenia">
+                                </th>
+                                <th class="actions">
+                                    Akcje
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind='foreach: model.studentModel'>
+                            <tr>
+                                <td>
+                                    <input type="number" id="s1NumerIndeksu" placeholder="numer indeksu"
+                                        data-bind="value: index" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" id="s1Imie" placeholder="imie" data-bind="value: firstName"
+                                        required>
+                                </td>
+                                <td>
+                                    <input type="text" id="s1Nazwisko" placeholder="nazwisko"
+                                        data-bind="value: lastName" required>
+                                </td>
+                                <td>
+                                    <input class="theDate" type="date" id="s1DataUrodzenia" data-bind="value: birthday"
+                                        min="1900-01-01" max="2001-01-01" required>
+                                </td>
+                                <td class="actions">
+                                    <!--<input type="submit" id="s1Oceny" value="Oceny">-->
+                                    <a class="fakeButton" href="#oceny" data-bind="click: $parent.grades">Oceny</a>
+                                    <input type="submit" id="s1Usun" value="Usuń">
+                                    <input type="submit" id="s1Edytuj" value="Edycja">
+                                    <input type="submit" id="studentDodaj" value="Dodaj">
+                                </td>
+                            </tr>
+                        </tbody>
+
+
                     </table>
                 </form>
 
@@ -205,37 +188,43 @@
                 <h2>Lista przedmiotów</h2>
                 <form>
                     <table>
-                        <tr>
-                            <th>
-                                <input type="search" id="idPrzedmiotu" placeholder="id">
-                            </th>
-                            <th>
-                                <input type="search" id="nazwaPrzedmiotu" placeholder="Nazwa przedmiotu">
-                            </th>
-                            <th>
-                                <input type="search" id="prowadzacy" placeholder="Prowadzący">
-                            </th>
-                            <th class="actions">
-                                Akcje
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="number" id="p1Id" placeholder="id" value=1 required min=0>
-                            </td>
-                            <td>
-                                <input type="text" id="p1Nazwa" placeholder="Nazwa przedmiotu" value="SINT" required>
-                            </td>
-                            <td>
-                                <input type="text" id="p1Prowadzacy" placeholder="Prowadzący" value="Tomasz Pawlak"
-                                    required>
-                            </td>
-                            <td class="actions">
-                                <input type="submit" id="p1Usun" value="Usuń">
-                                <input type="submit" id="p1Edytuj" value="Edycja">
-                                <input type="submit" id="przedmiotDodaj" value="Dodaj">
-                            </td>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="search" id="idPrzedmiotu" placeholder="id">
+                                </th>
+                                <th>
+                                    <input type="search" id="nazwaPrzedmiotu" placeholder="Nazwa przedmiotu">
+                                </th>
+                                <th>
+                                    <input type="search" id="prowadzacy" placeholder="Prowadzący">
+                                </th>
+                                <th class="actions">
+                                    Akcje
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind='foreach: model.courseModel'>
+                            <tr>
+                                <td>
+                                    <input type="number" id="p1Id" placeholder="id" data-bind="value: id" required
+                                        min=0>
+                                </td>
+                                <td>
+                                    <input type="text" id="p1Nazwa" placeholder="Nazwa przedmiotu"
+                                        data-bind="value: name" required>
+                                </td>
+                                <td>
+                                    <input type="text" id="p1Prowadzacy" placeholder="Prowadzący"
+                                        data-bind="value: lecturer" required>
+                                </td>
+                                <td class="actions">
+                                    <input type="submit" id="p1Usun" value="Usuń">
+                                    <input type="submit" id="p1Edytuj" value="Edycja">
+                                    <input type="submit" id="przedmiotDodaj" value="Dodaj">
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </form>
             </article>
@@ -247,6 +236,11 @@
     <footer>
         132207 Dominik Doberski <a href="http://www2.cs.put.poznan.pl/">Strona uczelni</a>
     </footer>
+
+    <script src="knockout-3.5.1.js"></script>
+    <script src="jquery.js"></script>
+    <script src="knockout.mapping-latest.js"></script>
+    <script src="scripts.js"></script>
 </body>
 
 </html>
