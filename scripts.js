@@ -11,6 +11,12 @@ var Model = function() {
 
     self.path = serverUrl; 
 
+    self.students.subscribe(function(changes) {
+
+        console.log(changes);
+    
+    }, null, "arrayChange");
+
     self.getStudents = function() {
 
         $.ajax({ 
@@ -22,9 +28,6 @@ var Model = function() {
                 $.each(data, function(index) {
                     var student = ko.mapping.fromJS(data[index]);
                     self.students.push(student);
-                    self.students[self.students.length-1].subscribe = function(name) {
-                        alert("something change");
-                    };
                 });
                 console.log(self.students())             
             }
