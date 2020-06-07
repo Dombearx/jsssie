@@ -15,9 +15,13 @@ var Model = function() {
 
     self.globalDraftId = 1;
 
+    var gradeSubscription = null;
+
     self.newStudent = {index: ko.observable(), firstName: ko.observable(), lastName: ko.observable(), birthday: ko.observable(), draftId: self.globalDraftId++};
-    self.newCourse = {id: ko.observable(), name: ko.observable(), lecturer: ko.observable()};
-    self.newGrade = {id: ko.observable(), value: ko.observable(), course: ko.observable(), date: ko.observable()};
+    self.newCourse = {id: ko.observable(), name: ko.observable(), lecturer: ko.observable(), draftId: self.globalDraftId++};
+    self.newGrade = {id: ko.observable(), value: ko.observable(), course: ko.observable(), date: ko.observable(), draftId: self.globalDraftId++};
+
+    
 
     self.path = serverUrl; 
 
@@ -108,10 +112,10 @@ var Model = function() {
             accept: 'application/json; charset=utf-8',
             data: ko.mapping.toJSON(studentToPut),
             success: data => {  
-                console.log("deleted succesfully")           
+                console.log("edited succesfully")           
             },
             complete: data => {
-                console.log("deleting complete", data)
+                console.log("editing complete", data)
             }
         });
     }
@@ -140,22 +144,6 @@ var Model = function() {
 
                     self.students.push(student)
                 })
-
-                
-
-                //self.students(data);
-                // console.log("self.students: ", self.students())
-
-                // self.students().forEach(student => {
-                //     console.log("foreach:", student)
-                //     student.subscribe(self.studetPut)
-                // })
-
-                // ko.utils.arrayForEach(self.students, function(student) {
-                //     console.log("foreach:", student)
-                //     student.subscribe(self.studetPut)
-                // });
-
                 self.students.subscribe(self.manageStudents, null, 'arrayChange');
             }
         });
@@ -179,18 +167,32 @@ var Model = function() {
     // COURSES
     self.manageCourses = (objects => {
         objects.forEach(object => {
-            if(object.status == "added"){
+            if(object.status == "added" && object.value.hasOwnProperty('draftId')){
                 console.log("course status added: ", object)
                 var course = object.value
+                var newCourseDraftId = course.draftId
+
+                var copiedCourse = self.removeDraftId(course)
+
                 $.ajax({ 
                     type: 'POST', 
                     url: `${self.path}/courses`, 
                     dataType: 'json',
                     contentType: "application/json; charset=utf-8",
                     accept: 'application/json; charset=utf-8',
-                    data: ko.mapping.toJSON(course),
+                    data: ko.mapping.toJSON(copiedCourse),
                     success: data => {  
-                        console.log("added succesfully")           
+                        console.log("added succesfully") 
+                        self.courses().forEach(course => {
+                            if(course.draftId == newCourseDraftId){
+                                self.courses.remove(course)
+                            }
+                        })
+
+                        var course = ko.mapping.fromJS(data)
+
+                        course = self.subscribeCourse(course);
+                        self.courses.push(course)          
                     },
                     complete: data => {
                         console.log("adding complete", data)
@@ -198,13 +200,141 @@ var Model = function() {
                 });
             }
 
-            if(object.status == "deleted"){
+            if(object.status == "deleted" && !object.value.hasOwnProperty('draftId')){
                 var course = object.value
                 console.log("removing course", course)
-                console.log(`${self.path}/students/${course.id}`)
+                console.log(`${self.path}/students/${course.id()}`)
                 $.ajax({ 
                     type: 'DELETE', 
-                    url: `${self.path}/courses/${course.id}`, 
+                    url: `${self.path}/courses/${course.id()}`, 
+                    dataType: 'json',
+                    accept: 'application/json; charset=utf-8',
+                    success: data => {  
+                        console.log("deleted succesfully")           
+                    },
+                    complete: data => {
+                        console.log("deleting complete", data)
+                    }
+                });
+            }
+        })
+    });
+
+    self.editCourse  = (id) => (wartoscPola) => {
+
+        var courseToPut = self.courses().find(x => x.id() === id)
+
+        $.ajax({ 
+            type: 'PUT', 
+            url: `${self.path}/courses/${courseToPut.id()}`, 
+            dataType: 'json',
+            contentType: "application/json; charset=utf-8",
+            accept: 'application/json; charset=utf-8',
+            data: ko.mapping.toJSON(courseToPut),
+            success: data => {  
+                console.log("edited succesfully")           
+            },
+            complete: data => {
+                console.log("editing complete", data)
+            }
+        });
+        
+    };
+
+    self.subscribeCourse = function(course){
+        course.id.subscribe(self.editCourse(course.id()))
+        course.name.subscribe(self.editCourse(course.id()))
+        course.lecturer.subscribe(self.editCourse(course.id()))
+
+        return course
+    }
+
+    self.getCourses = function() {
+
+        $.ajax({ 
+            type: 'GET', 
+            url: `${self.path}/courses`, 
+            dataType: 'json',
+            accept: 'application/json; charset=utf-8',
+            success: data => {  
+
+                data.forEach(x => {
+                    var course = ko.mapping.fromJS(x)
+                    course = self.subscribeCourse(course);
+
+                    self.courses.push(course)
+                })
+
+                self.courses.subscribe(self.manageCourses, null, 'arrayChange');
+                console.log(self.courses())            
+            }
+        });
+        
+    };
+
+    self.removeCourse = function(course) {
+        self.courses.remove(course);  
+        
+    };
+
+    self.addCourse = function() {   
+        self.courses.push({ ...self.newCourse });
+
+        self.newCourse.id("")
+        self.newCourse.name("")
+        self.newCourse.lecturer("")
+        self.newCourse.draftId(self.globalDraftId++)
+    };
+
+
+    self.manageGrades = (objects => {
+        objects.forEach(object => {
+            if(object.status == "added" && object.value.hasOwnProperty('draftId')){
+                console.log("grade status added: ", object)
+
+                var grade = object.value
+                var courseId = grade.course.id;                
+                var newGradeDraftId = grade.draftId
+
+                grade.course = self.courses().find(x => x.id() === courseId)
+
+                var copiedGrade = self.removeDraftId(grade)
+
+
+                $.ajax({ 
+                    type: 'POST', 
+                    url: `${self.path}/students/${self.currentStudentId()}/grades`, 
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    accept: 'application/json; charset=utf-8',
+                    data: ko.mapping.toJSON(copiedGrade),
+                    success: data => {  
+                        
+                        self.grades().forEach(grade => {
+                            if(grade.draftId == newGradeDraftId){
+                                self.grades.remove(grade)
+                            }
+                        })
+
+                        var grade = ko.mapping.fromJS(data)
+
+                        grade = self.subscribeGrade(grade);
+                        self.grades.push(grade)
+                        console.log("new grade id: ", grade.id())
+                    },
+                    complete: data => {
+                        console.log("complete", data)
+                    }
+                });                   
+            }
+
+            if(object.status == "deleted" && !object.value.hasOwnProperty('draftId')){
+                var grade = object.value
+                console.log("removing garde", grade)
+                console.log(`${self.path}/students/${self.currentStudentId()}/grades/${grade.id()}`)
+                $.ajax({ 
+                    type: 'DELETE', 
+                    url: `${self.path}/students/${self.currentStudentId()}/grades/${grade.id()}`, 
                     dataType: 'json',
                     accept: 'application/json; charset=utf-8',
                     success: data => {  
@@ -219,153 +349,92 @@ var Model = function() {
     });
 
 
-    self.getCourses = function() {
+    self.subscribeGrade = function(grade){
+        grade.value.subscribe(self.editGrade(grade.id()))
+        grade.course.id.subscribe(self.editGrade(grade.id()))
+        grade.date.subscribe(self.editGrade(grade.id()))
 
-        $.ajax({ 
-            type: 'GET', 
-            url: `${self.path}/courses`, 
-            dataType: 'json',
-            accept: 'application/json; charset=utf-8',
-            success: data => {  
-                self.courses(data); 
-                self.courses.subscribe(self.manageCourses, null, 'arrayChange');
-                console.log(self.courses())            
-            }
-        });
-        
-    };
+        return grade
+    }
 
-    self.addCourse = function() {   
-        self.courses.push(self.newCourse);
-
-    };
-
-    self.removeCourse = function(course) {
-        self.courses.remove(course);  
-        
-    };
-
-    // self.students.subscribe(newValue => {
-    //     console.log("newValue:", newValue);
-    //     console.log("students: ", self.students());
-    // }, null, "beforeChange");
-
-   
+    
 
     self.getGrades = function(student) {
         console.log("get grades")
-        self.currentStudent(student.firstName + " " + student.lastName);
-        self.currentStudentId(student.index);
+
+        self.currentStudent(student.firstName() + " " + student.lastName());
+        self.currentStudentId(student.index());
+
+        if(gradeSubscription != null){
+            gradeSubscription.dispose();
+        }
+         
+        self.grades([]);
+        gradeSubscription = self.grades.subscribe(self.manageGrades, null, 'arrayChange');
+
+        console.log(`${self.path}/students/${student.index()}/grades`)
+
         $.ajax({ 
             type: 'GET', 
-            url: `${self.path}/students/${student.index}/grades`, 
+            url: `${self.path}/students/${student.index()}/grades`, 
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
             accept: 'application/json; charset=utf-8',
-            data: ko.mapping.toJSON(student),
             success: data => {  
-                self.grades(data);      
-                console.log("data", data)
-                console.log("grades", self.grades())    
-            }
-        });
-        return true;
-        
-    };
-
-    self.getGradesByIndex = function(studentIndex) {
-        console.log("get grades by index")
-        self.newGrade.course = ko.observable(self.courses[0]);
-
-        ko.utils.arrayForEach(self.students(), function(student) {
-            if(student.index == studentIndex){
-                self.currentStudent(student.firstName + " " + student.lastName);
-                self.currentStudentId(student.index);
                 
-            }
-        });  
 
-        $.ajax({ 
-            type: 'GET', 
-            url: `${self.path}/students/${studentIndex}/grades`, 
-            dataType: 'json',
-            contentType: "application/json; charset=utf-8",
-            accept: 'application/json; charset=utf-8',
-            success: data => {  
-                self.grades(data);      
-                console.log("data", data)
-                console.log("grades", self.grades())    
+                console.log("Adding grade to list")
+                data.forEach(x => {
+                    var grade = ko.mapping.fromJS(x)
+                    grade = self.subscribeGrade(grade);
+
+                    self.grades.push(grade)
+                })
+                console.log(self.grades())
             }
         });
         return true;
-        
     };
-
-    
 
     self.addGrade = function() {
-        console.log("add grades")
-        var courseName = self.newGrade.course();
+        if(self.newGrade.value() === "2.5"){
+            console.log("grade returning")
+            return
+        }
+        console.log("adding grade")
+        self.grades.push({ ...self.newGrade });
 
-        console.log("student", self.currentStudentId());
-        console.log("course", self.newGrade);
-        console.log("url", `${self.path}/students/${self.currentStudentId()}/grades`);
-        $.ajax({ 
-            type: 'POST', 
-            url: `${self.path}/students/${self.currentStudentId()}/grades`, 
-            dataType: 'json',
-            contentType: "application/json; charset=utf-8",
-            accept: 'application/json; charset=utf-8',
-            data: ko.mapping.toJSON(self.newGrade),
-            success: data => {  
-                self.getGradesByIndex(self.currentStudentId());       
-            },
-            complete: data => {
-                console.log("fail", data)
-            }
-        });        
+        self.newGrade.id("")
+        self.newGrade.value("")
+        self.newGrade.course(self.courses()[0].id)
+        self.newGrade.date(new Date())
+    };
+
+    self.removeGrade = function(grade) {
+        self.grades.remove(grade); 
     };
 
 
-    self.editGrade = function(grade) {
-        console.log("grade", grade)
+    self.editGrade  = (id) => (wartoscPola) => {
 
-        console.log(`${self.path}/students/${self.currentStudentId()}/grades/${grade.id}`)
-        $.ajax({ 
-            type: 'PUT', 
-            url: `${self.path}/students/${self.currentStudentId()}/grades/${grade.id}`, 
-            dataType: 'json',
-            contentType: "application/json; charset=utf-8",
-            data: ko.mapping.toJSON(grade),
-            success: data => {  
-                console.log("succ", data)
-                self.getGradesByIndex(self.currentStudentId());           
-            },
-            complete: data => {
-                console.log("fail", data)
-            }
-        });
-        
-    };
-
-    
-
-    
-
-   
-
-    self.editCourse = function(course) {
+        var gradeToPut = self.grades().find(x => x.id() === id)
 
         $.ajax({ 
             type: 'PUT', 
-            url: `${self.path}/courses/${course.id}`, 
+            url: `${self.path}/students/${self.currentStudentId()}/grades/${id}`, 
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
-            accept: 'application/json; charset=utf-8',
-            data: ko.mapping.toJSON(course),
+            data: ko.mapping.toJSON(gradeToPut),
+            success: data => {  
+                console.log("edited succesfully")           
+            },
+            complete: data => {
+                console.log("editing complete", data)
+            }
         });
         
-    };
+    };        
+    
 
 };
 
@@ -373,113 +442,6 @@ var Model = function() {
 var view = new Model();
 
 view.getStudents();
-
-
-
 view.getCourses();
 
 ko.applyBindings(view);
- 
-/*
-class model {
-
-    studentModel = null;
-    courseModel = null;
-
-    getStudents = Type => {
-        
-        $.ajax({ 
-            type: 'GET', 
-            url: serverUrl+Type, 
-            dataType: 'json',
-            accept: 'application/json; charset=utf-8',
-            success: data => {  
-                console.log(data)           
-                this.studentModel = pd.show(data, this.studentModel)
-            }
-            
-        });
-    }
-    
-    getCourses = Type => {    
-        
-        $.ajax({ 
-            type: 'GET', 
-            url: serverUrl+Type, 
-            dataType: 'json',
-            accept: 'application/json; charset=utf-8',
-            success: data => {             
-                this.courseModel = pd.show(data, this.courseModel)
-            }
-            
-        });
-    }
-    
-} 
-
-
-class processData {
-    show = function(data, model) {
-
-        if(model == null){
-            model = ko.mapping.fromJS(data)
-        } else { 
-            ko.mapping.fromJS(data, model);
-        }
-
-
-        for (var field in model) {
-            console.log(field)
-            field.subscribe(function(newValue) {
-                alert("The person's new name is " + newValue);
-            });
-        }
-
-        
-
-        console.log(model)
-        
-        $.each(data, function(index, element) {
-            console.log(element)                   
-        });
-
-        return model
-    
-    }
-}
-
-
-
-var pd = new processData();
-var myModel = new model();
-
-
-
-console.log(myModel.getStudents("students"))
-console.log(myModel.getCourses("courses"))
-
-
-
-
-window.onload = function() {
- 
-    alert( "welcome" );
-     
-};
-
-$(function () {
-    if (!Modernizr.inputtypes.date) {
-        console.log("The 'date' input type is not supported, so using JQueryUI datepicker instead.");
-        $(".theDate").datepicker();
-    }
-});
-
-
-$(function () {
-    setTimeout(function() {
-        ko.applyBindings(myModel);
-        
-    }, 500);
-});
-
-*/

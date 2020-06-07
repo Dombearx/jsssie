@@ -149,7 +149,6 @@
                                 </td>
                                 <td class="actions">
                                     <button class="fakeButton" data-bind="click: $parent.removeGrade">Usuń</button>
-                                    <button class="fakeButton" data-bind="click: $parent.editGrade">Edycja</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -164,7 +163,7 @@
                             </td>
                             <td>
                                 <select id="o1Przedmioty"
-                                    data-bind="options: view.courses, optionsText: 'name', optionsValue: 'id', value: newGrade.course">
+                                    data-bind="options: view.courses, optionsText: 'name', optionsValue: 'id', value: newGrade.course.id">
 
                                 </select>
                             </td>
@@ -216,7 +215,6 @@
                                 </td>
                                 <td class="actions">
                                     <button class="fakeButton" data-bind="click: $parent.removeCourse">Usuń</button>
-                                    <button class="fakeButton" data-bind="click: $parent.editCourse">Edycja</button>
                                 </td>
                             </tr>
                         </tbody>
